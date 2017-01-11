@@ -92,12 +92,14 @@ var AutoFoldTracker = {
 	//*/
 
 		if(!vscode.window.activeTextEditor) {
-			vscode.window.showErrorMessage('Auto Fold: No active text editors.');
+			// vscode.window.showErrorMessage('Auto Fold: No active text editors.');
+			AutoFoldTracker.PrintDebug("No active text editors.");
 			return;
 		}
 
 		if(!vscode.window.activeTextEditor.document) {
-			vscode.window.showErrorMessage('Auto Fold: No file open and active.');
+			// vscode.window.showErrorMessage('Auto Fold: No file open and active.');
+			AutoFoldTracker.PrintDebug("No file open and active.");
 			return;
 		}
 
