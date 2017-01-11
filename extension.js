@@ -64,12 +64,18 @@ var AutoFoldTracker = {
 
 		// figure out what level we want.
 
+		let Config = vscode.workspace.getConfiguration('autofold');
 		let Level = AutoFoldTracker.Get(File);
+
+		if(Level == 0 && Config.default > 0)
+		Level = Config.default;
 
 		// check if it makes sense.
 
-		if(Level < 0 || Level > 9) {
+		if(Level <= 0 || Level > 9) {
+			if(Level != 0)
 			vscode.window.showInformationMessage('Auto Fold: Valid range is 1 to 9.');
+
 			return;
 		}
 

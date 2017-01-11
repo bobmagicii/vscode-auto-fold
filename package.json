@@ -34,7 +34,18 @@
 				"mac": "alt+`",
 				"when": "editorTextFocus"
 			}
-		]
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Auto Fold Configuration",
+			"properties": {
+				"autofold.default": {
+					"type": "integer",
+					"default": 0,
+					"description": "If a file does not specify a folding level, automatically fold the file to this level. Set to 0 to disable folding files that do not ask for it."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"postinstall": "node ./node_modules/vscode/bin/install"
