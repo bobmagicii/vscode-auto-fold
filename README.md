@@ -28,6 +28,19 @@ and typing `autofold`.
 # Changelogue
 
 ```
+1.0.1 (2017-01-11)
+
+- added autofold.default to configuration. it will autofold files that do not
+  have vscode-fold in them to the value specified. default is 0, which is off.
+
+- added keybinding alt+grave to refold file accorinding to its config.
+
+- added statusbar message when auto folding that vanishes after 2sec.
+
+- swap out editor error banners with silent ones because in reality nobody cares
+  if you try and fold when you have no files open, i am sure.
+
 1.0.0 (2017-01-10)
+
 - Initial release.
 ```
