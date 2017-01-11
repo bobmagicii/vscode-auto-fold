@@ -13,9 +13,9 @@ Automatic folding only happens when opened. If they are already open, they will
 stay as you have them.
 
 If you just added the magic comment to a file and want to fold it without
-reloading it, or if at any time you can re-fold a file as configured using the
-keyboard shortcut `alt+grave` or by using the command pallete `ctrl+shift+p`
-and typing `autofold`.
+reloading it, or if at any time you want to re-fold a file as configured, you
+can use the keyboard shortcut `alt+grave` or use the command pallete
+`ctrl+shift+p` and typing `autofold`.
 
 # Example: Javascript
 
