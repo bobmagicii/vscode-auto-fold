@@ -41,6 +41,6 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-spell-check.git"
+		"url": "https://github.com/bobmagicii/vscode-auto-fold.git"
 	},
 }
