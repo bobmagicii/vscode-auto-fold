@@ -1,0 +1,46 @@
+{
+	"name": "autofoldyeah",
+	"displayName": "Auto Fold",
+	"description": "Automatically fold code when the file is opened if the magic comment is found.",
+	"version": "1.0.0",
+	"publisher": "bobmagicii",
+	"icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#413d3d",
+		"theme": "dark"
+	},
+	"engines": {
+		"vscode": "^1.5.0"
+	},
+	"categories": [
+		"Formatters",
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.autofold",
+				"title": "Auto Fold"
+			}
+		]
+	},
+	"scripts": {
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"typescript": "^2.0.3",
+		"vscode": "^1.0.0",
+		"mocha": "^2.3.3",
+		"eslint": "^3.6.0",
+		"@types/node": "^6.0.40",
+		"@types/mocha": "^2.2.32"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/vscode-spell-check.git"
+	},
+}
