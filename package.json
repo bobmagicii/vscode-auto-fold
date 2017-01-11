@@ -26,6 +26,14 @@
 				"command": "extension.autofold",
 				"title": "Auto Fold"
 			}
+		],
+		"keybindings": [
+			{
+				"command": "extension.autofold",
+				"key": "alt+`",
+				"mac": "cmd+`",
+				"when": "editorTextFocus"
+			}
 		]
 	},
 	"scripts": {
