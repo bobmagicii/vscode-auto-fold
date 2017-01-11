@@ -82,6 +82,7 @@ var AutoFoldTracker = {
 		// commit.
 
 		AutoFoldTracker.PrintDebug('Folding File: ' + File.uri.fsPath);
+		vscode.window.setStatusBarMessage("Auto Folding Level " + Level,2000);
 		vscode.commands.executeCommand('editor.foldLevel' + Level);
 
 		// and remember we did this file.
