@@ -2,7 +2,7 @@
 	"name": "autofoldyeah",
 	"displayName": "Auto Fold",
 	"description": "Automatically fold code when the file is opened if the magic comment is found.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "bobmagicii",
 	"icon": "images/icon.png",
 	"galleryBanner": {
