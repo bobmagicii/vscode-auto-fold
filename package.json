@@ -31,7 +31,7 @@
 			{
 				"command": "extension.autofold",
 				"key": "alt+`",
-				"mac": "cmd+`",
+				"mac": "alt+`",
 				"when": "editorTextFocus"
 			}
 		]
