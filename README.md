@@ -1,4 +1,4 @@
-# Features
+# [![nether.io](https://img.shields.io/badge/Auto%20Fold-%20Visual%20Studio%20Marketplace-007ACC.svg)](http://nether.io/)
 
 This extension will automatically fold code when files are opened if a magic
 comment is found.
@@ -16,6 +16,10 @@ If you just added the magic comment to a file and want to fold it without
 reloading it, or if at any time you want to re-fold a file as configured, you
 can use the keyboard shortcut `alt+grave` or use the command pallete
 `ctrl+shift+p` and typing `autofold`.
+
+# Installation
+
+Use the extension panel in Visual Studio Code, type Fold, find this, install it.
 
 # Example: Javascript
 
