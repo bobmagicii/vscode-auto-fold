@@ -21,6 +21,22 @@ can use the keyboard shortcut `alt+grave` or use the command pallete
 
 Use the extension panel in Visual Studio Code, type Fold, find this, install it.
 
+# Configuration
+
+## `autofold.default`
+
+You can fold all files without magic comments by default by setting this in
+either your user or workspace configuration. Default value is 0, which disables
+auto folding of files that do not ask for it.
+
+# Keybindings
+
+## `extension.autofold`
+
+You can change this keybinding in your keybindings config. The default is
+alt+grave (the `, same key as ~) and it will re-fold the file to the level that
+the file asks to be folded at.
+
 # Example: Javascript
 
 ![Javascript](images/example-js.png)
