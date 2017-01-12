@@ -64,6 +64,7 @@ var AutoFoldTracker = {
 
 		// figure out what level we want.
 
+		let Config = vscode.workspace.getConfiguration("autofold");
 		let Level = AutoFoldTracker.Get(File);
 		let CurrentDocument = null;
 
@@ -81,15 +82,21 @@ var AutoFoldTracker = {
 		if(Level <= 0 || Level > 9) {
 			if(Level != 0)
 			vscode.window.showInformationMessage('Auto Fold: Valid range is 1 to 9.');
-
-			return;
 		}
 
 		// commit.
 
-		AutoFoldTracker.PrintDebug('Folding File: ' + File.uri.fsPath);
-		vscode.window.setStatusBarMessage("Auto Folding Level " + Level,2000);
-		vscode.commands.executeCommand('editor.foldLevel' + Level);
+		if(Config.unfold) {
+			AutoFoldTracker.PrintDebug('Unfolding File: ' + File.uri.fsPath);
+			vscode.window.setStatusBarMessage("Auto Unfolding",2000);
+			vscode.commands.executeCommand('editor.unfoldAll');
+		}
+
+		if(Level > 0) {
+			AutoFoldTracker.PrintDebug('Folding File: ' + File.uri.fsPath);
+			vscode.window.setStatusBarMessage("Auto Folding Level " + Level,2000);
+			vscode.commands.executeCommand('editor.foldLevel' + Level);
+		}
 
 		// and remember we did this file.
 
