@@ -64,11 +64,17 @@ var AutoFoldTracker = {
 
 		// figure out what level we want.
 
-		let Config = vscode.workspace.getConfiguration('autofold');
 		let Level = AutoFoldTracker.Get(File);
+		let CurrentDocument = null;
 
-		if(Level == 0 && Config.default > 0)
-		Level = Config.default;
+		// find the current active file.
+
+		if(vscode.window.activeTextEditor)
+		if(vscode.window.activeTextEditor.document)
+		CurrentDocument = vscode.window.activeTextEditor.document;
+
+		if(Level == 0)
+		Level = AutoFoldTracker.GetDefaultLevel(CurrentDocument);
 
 		// check if it makes sense.
 
@@ -196,6 +202,51 @@ var AutoFoldTracker = {
 
 		console.log("[AF] " + Msg);
 		return;
+	},
+
+	GetDefaultLevel:
+	function(File) {
+	/*//
+	@argv TextDocument
+	@return Int
+	try and find a folding level based on the extension of this file. if none
+	is found then return the default default.
+	//*/
+
+		let Config = vscode.workspace.getConfiguration("autofold");
+		let Iter = 0;
+		let Output = 0;
+		let ExtConf;
+		let ExtCurr;
+
+		AutoFoldTracker.PrintDebug(JSON.stringify(Config));
+
+		for(Iter = 0; Iter < Config.types.length; Iter++) {
+			if(typeof Config.types[Iter] != "object")
+			continue;
+
+			if(typeof Config.types[Iter].ext != "string")
+			continue;
+
+			if(typeof Config.types[Iter].level != "number")
+			continue;
+
+			ExtConf = Config.types[Iter].ext.toLowerCase();
+			ExtCurr = File.uri.fsPath.toLowerCase();
+
+			if(ExtCurr.indexOf(ExtConf) == (ExtCurr.length - ExtConf.length)) {
+				AutoFoldTracker.PrintDebug("Using value for " + Config.types[Iter].ext);
+				Output = Config.types[Iter].level;
+				break;
+			}
+		}
+
+		// if we still have not found one then default to the default.
+
+		if(Output == 0)
+		Output = Config.default;
+
+		return Output;
 	}
 
 };

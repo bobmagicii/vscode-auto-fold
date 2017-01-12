@@ -43,6 +43,11 @@
 					"type": "integer",
 					"default": 0,
 					"description": "If a file does not specify a folding level, automatically fold the file to this level. Set to 0 to disable folding files that do not ask for it."
+				},
+				"autofold.types": {
+					"type": "array",
+					"default": [],
+					"description": "Default filetypes with their automatic folding level based on their file extensions. It should be an array of objects containing two properties: ext (a string) and level (an integer)."
 				}
 			}
 		}

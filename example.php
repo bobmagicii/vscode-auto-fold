@@ -1,8 +1,8 @@
 <?php
 
-// vscode-fold=2
-
 namespace Magic;
+
+// vscode-fold=2
 
 class AmazingThing
 extends AnotherThing {

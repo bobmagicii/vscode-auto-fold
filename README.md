@@ -1,6 +1,6 @@
 # [![https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah](https://img.shields.io/badge/Auto%20Fold-%20Visual%20Studio%20Marketplace-007ACC.svg)](https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah)
 
-This extension will automatically fold code when files are opened if a magic comment is found.
+This extension will automatically fold code when files are opened if a magic comment is found or if configured in the user or workspace config.
 
 	vscode-fold=#
 
