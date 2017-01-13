@@ -69,6 +69,10 @@ Just like if you use the normal hot keys without this extension, the block where
 # Changelogue
 
 ```
+1.0.3 (2017-01-13)
+
+- clean up debugging and optimise mostly. maybe be slightly snappier, though it already was decent.
+
 1.0.2 (2017-01-12)
 
 - added option `autofold.types` to define defaults based on file extension.
