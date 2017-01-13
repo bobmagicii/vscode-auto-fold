@@ -37,7 +37,7 @@ this is the main api instance that contains all the tracking and actions
 to make this thing go.
 //*/
 
-	Version: 103,
+	Version: 104,
 	/*//
 	@type Int
 	current api version.
@@ -193,7 +193,7 @@ to make this thing go.
 		// a comment which more or less will only ever even happen in this
 		// code lol.
 
-		let Result = File.getText().match(/vscode-fold=(\d)$/m);
+		let Result = File.getText().match(/vscode-fold=(\d+)/m);
 		let Level = 0;
 
 		////////
