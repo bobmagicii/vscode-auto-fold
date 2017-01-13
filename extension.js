@@ -7,7 +7,7 @@
 //// vscode-fold=# and if found, will automatically fold that file to the
 //// specified level when it is opened.
 ////
-//// vscode-fold=1
+//// vscode-fold=2
 //*/
 
 let vscode = require('vscode');
@@ -32,8 +32,30 @@ to switch tabs forth and back, or use the command autofold.
 ////////////////////////////////////////////////////////////////////////////////
 
 var AutoFoldTracker = {
+/*//
+this is the main api instance that contains all the tracking and actions
+to make this thing go.
+//*/
+
+	Version: 102,
+	/*//
+	@type Int
+	current api version.
+	//*/
+
+	Debug: false,
+	/*//
+	@type Bool
+	supress debugging messages. i think console.log is slow so maybe we can
+	get moar by skipping them.
+	//*/
 
 	Files: [],
+	/*//
+	@type Array
+	holds a list of filenames we currently have open so that it can remember
+	if it has already attempted a file fold this session or not.
+	//*/
 
 	Has:
 	function(File) {
@@ -65,36 +87,26 @@ var AutoFoldTracker = {
 		// figure out what level we want.
 
 		let Config = vscode.workspace.getConfiguration("autofold");
-		let Level = AutoFoldTracker.Get(File);
-		let CurrentDocument = null;
-
-		// find the current active file.
-
-		if(vscode.window.activeTextEditor)
-		if(vscode.window.activeTextEditor.document)
-		CurrentDocument = vscode.window.activeTextEditor.document;
-
-		if(Level == 0)
-		Level = AutoFoldTracker.GetDefaultLevel(CurrentDocument);
+		let Level = AutoFoldTracker.GetLevel(File);
 
 		// check if it makes sense.
 
-		if(Level <= 0 || Level > 9) {
-			if(Level != 0)
+		if((Level <= 0 || Level > 9) && Level != 0) {
 			vscode.window.showInformationMessage('Auto Fold: Valid range is 1 to 9.');
+			return;
 		}
 
 		// commit.
 
 		if(Config.unfold) {
-			AutoFoldTracker.PrintDebug('Unfolding File: ' + File.uri.fsPath);
-			vscode.window.setStatusBarMessage("Auto Unfolding",2000);
+			AutoFoldTracker.PrintDebug('>> unfold: ' + File.uri.fsPath);
+			vscode.window.setStatusBarMessage("Auto Unfold",2000);
 			vscode.commands.executeCommand('editor.unfoldAll');
 		}
 
 		if(Level > 0) {
-			AutoFoldTracker.PrintDebug('Folding File: ' + File.uri.fsPath);
-			vscode.window.setStatusBarMessage("Auto Folding Level " + Level,2000);
+			AutoFoldTracker.PrintDebug('>> fold(' + Level + '): ' + File.uri.fsPath);
+			vscode.window.setStatusBarMessage("Auto Fold: " + Level,2000);
 			vscode.commands.executeCommand('editor.foldLevel' + Level);
 		}
 
@@ -111,42 +123,12 @@ var AutoFoldTracker = {
 	handler for when fold is requested by the pallete command.
 	//*/
 
-		if(!vscode.window.activeTextEditor) {
-			// vscode.window.showErrorMessage('Auto Fold: No active text editors.');
-			AutoFoldTracker.PrintDebug("No active text editors.");
-			return;
-		}
+		let Current = AutoFoldTracker.GetCurrentDocument();
 
-		if(!vscode.window.activeTextEditor.document) {
-			// vscode.window.showErrorMessage('Auto Fold: No file open and active.');
-			AutoFoldTracker.PrintDebug("No file open and active.");
-			return;
-		}
-
+		if(Current)
 		AutoFoldTracker.Fold(vscode.window.activeTextEditor.document);
+
 		return;
-	},
-
-	Get:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Int
-	try and find the magic comment within the file. returns the int value of
-	that comment for the fold levels.
-	//*/
-
-		// attempt to find vscode-fold=# in the file, keeping it at the end of
-		// the line to avoid triggering it when just talking about it in a
-		// comment which more or less will only ever even happen in this code
-		// lol.
-
-		let Result = File.getText().match(/vscode-fold=(\d)$/m);
-
-		if(Result && Result.length == 2 && parseInt(Result[1]) > 0)
-		return parseInt(Result[1]);
-
-		return 0;
 	},
 
 	OnFileOpen:
@@ -182,10 +164,8 @@ var AutoFoldTracker = {
 			// if the file is still open do nothing.
 
 			for(Iter = 0; Iter < vscode.workspace.textDocuments.length; Iter++)
-			if(vscode.workspace.textDocuments[Iter].uri.fsPath == File.uri.fsPath) {
-				AutoFoldTracker.PrintDebug(File.uri.fsPath + ' is still open.');
-				return;
-			}
+			if(vscode.workspace.textDocuments[Iter].uri.fsPath == File.uri.fsPath)
+			return;
 
 			// pull it out.
 
@@ -199,16 +179,43 @@ var AutoFoldTracker = {
 		return;
 	},
 
-	PrintDebug:
-	function(Msg) {
+	GetLevel:
+	function(File) {
 	/*//
-	@argv String
-	@return Void
-	prints prefixed debug messages.
+	@argv TextDocument
+	@return Int
+	try and find the magic comment within the file. returns the int value of
+	that comment for the fold levels.
 	//*/
 
-		console.log("[AF] " + Msg);
-		return;
+		// attempt to find vscode-fold=# in the file, keeping it at the end
+		// of the line to avoid triggering it when just talking about it in
+		// a comment which more or less will only ever even happen in this
+		// code lol.
+
+		let Result = File.getText().match(/vscode-fold=(\d)$/m);
+		let Level = 0;
+
+		////////
+
+		// did the file specify the magic comment?
+
+		if(Result && Result.length == 2 && parseInt(Result[1]) > 0)
+		Level = Result[1];
+
+		////////
+
+		// fallback to configured values.
+
+		if(Level == 0)
+		Level = AutoFoldTracker.GetDefaultLevel(AutoFoldTracker.GetCurrentDocument());
+
+		else
+		AutoFoldTracker.PrintDebug("## using file vscode-fold: " + Level);
+
+		////////
+
+		return Level;
 	},
 
 	GetDefaultLevel:
@@ -226,23 +233,18 @@ var AutoFoldTracker = {
 		let ExtConf;
 		let ExtCurr;
 
-		AutoFoldTracker.PrintDebug(JSON.stringify(Config));
-
 		for(Iter = 0; Iter < Config.types.length; Iter++) {
-			if(typeof Config.types[Iter] != "object")
-			continue;
-
-			if(typeof Config.types[Iter].ext != "string")
-			continue;
-
-			if(typeof Config.types[Iter].level != "number")
+			if(!AutoFoldTracker.IsTypeConfigValid(Config.types[Iter]))
 			continue;
 
 			ExtConf = Config.types[Iter].ext.toLowerCase();
 			ExtCurr = File.uri.fsPath.toLowerCase();
 
 			if(ExtCurr.indexOf(ExtConf) == (ExtCurr.length - ExtConf.length)) {
-				AutoFoldTracker.PrintDebug("Using value for " + Config.types[Iter].ext);
+				AutoFoldTracker.PrintDebug(
+					"## using autofold.types[" + Config.types[Iter].ext + "]: " +
+					Config.types[Iter].level
+				);
 				Output = Config.types[Iter].level;
 				break;
 			}
@@ -250,10 +252,62 @@ var AutoFoldTracker = {
 
 		// if we still have not found one then default to the default.
 
-		if(Output == 0)
-		Output = Config.default;
+		if(Output == 0) {
+			AutoFoldTracker.PrintDebug("## using autofold.default: " + Config.default);
+			Output = Config.default;
+		}
 
 		return Output;
+	},
+
+	GetCurrentDocument:
+	function() {
+	/*//
+	@argv Void
+	@return ?TextDocument
+	get the currently active document.
+	//*/
+
+		if(vscode.window.activeTextEditor)
+		if(vscode.window.activeTextEditor.document)
+		return vscode.window.activeTextEditor.document;
+
+		return null;
+	},
+
+	IsTypeConfigValid:
+	function(TypeObject) {
+	/*//
+	@argv Object
+	@return Bool
+	make sure that the configuration object given for default types appears to
+	be a usable format.
+	//*/
+
+		if(typeof TypeObject != "object")
+		return false;
+
+		if(typeof TypeObject.ext != "string")
+		return false;
+
+		if(typeof TypeObject.level != "number")
+		return false;
+
+		return true;
+	},
+
+	PrintDebug:
+	function(Msg) {
+	/*//
+	@argv String
+	@return Void
+	prints prefixed debug messages.
+	//*/
+
+		if(AutoFoldTracker.Debug)
+		console.log("[AF] " + Msg);
+
+		return;
 	}
 
 };
@@ -263,6 +317,9 @@ var AutoFoldTracker = {
 
 exports.activate
 =function(context) {
+/*//
+hello moto
+//*/
 
 	context.subscriptions.push(vscode.commands.registerCommand(
 		'extension.autofold',
@@ -284,11 +341,14 @@ exports.activate
 	AutoFoldTracker.PrintDebug('Auto Fold has loaded.');
 	AutoFoldTracker.CommandFold();
 
-	return {};
+	return AutoFoldTracker;
 };
 
 exports.deactivate
 =function() {
+/*//
+otom olleh
+//*/
 
 	return;
 };
