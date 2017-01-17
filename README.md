@@ -1,7 +1,8 @@
 # [![https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah](https://img.shields.io/badge/Auto%20Fold-%20Visual%20Studio%20Marketplace-007ACC.svg)](https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah)
 
-This extension will automatically fold code files when you open them with the
-following formula, if you leave all the settings default.
+This extension will automatically fold code files when you open them. Automatic folding only happens when opened. If they are already open they will stay as you have them - unless that was the first time you switched to that tab since re-starting vscode - then it will fold it the first time that tab is activated.
+
+The following formula is followed to determine if a file should be folded:
 
 ## 1) Magic Comment
 
@@ -21,23 +22,11 @@ So for example, in our projects 90% of PHP files are classes, so I autofold all 
 
 ## 3) Default Fallback
 
-Failing the above conditions, you can force all files to be folded at a specific value set by `autofold.default`. See the configuration section for more info about that setting.
-
-It does not matter how you put that in your file. All that matters is that you put it somewhere your project won't syntax error on it - so within a single or multiline comment.
-
-Automatic folding only happens when opened. If they are already open, they will stay as you have them - unless that was the first time you switched to that tab since starting vscode cause then it will still fold it.
-
-If you just added the magic comment to a file and want to fold it without reloading it, or if at any time you want to re-fold a file as configured, you can use the keyboard shortcut `alt+grave` or use the command pallete `ctrl+shift+p` and typing `autofold`.
-
-
-
+Failing the above conditions, you can force all files to be folded at a specific value set with `autofold.default`. See the configuration section for more info about that setting.
 
 # Installation
 
 Use the extension panel in Visual Studio Code, type Fold, find this, install it.
-
-
-
 
 # Configuration
 
@@ -83,38 +72,27 @@ Automatically unfold files before folding them, default enabled. This will help 
 "autofold.unfold": true
 ```
 
-
-
-
 # Keybindings
 
 ## `extension.autofold`
 
 You can change this keybinding in your keybindings config. The default is alt+grave (the `, same key as ~) and it will re-fold the file to the level that the file asks to be folded at.
 
+# Tips
 
+If you just added the magic comment to a file and want to fold it without reloading it, or if at any time you want to re-fold a file as configured, you can use the keyboard shortcut `alt+grave` or use the command pallete `ctrl+shift+p` and typing `autofold`.
 
-
-# Example: Javascript
+# Magic Comment Example: Javascript
 
 ![Javascript](images/example-js.png)
 
-
-
-
-# Example: PHP
+# Magic Comment Example: PHP
 
 ![Javascript](images/example-php.png)
-
-
-
 
 # Known Issues
 
 Just like if you use the normal hot keys without this extension, the block where the cursor is will not be folded, even though everything else will. Considering adding an option to move the cursor out.
-
-
-
 
 # Changelogue
 
