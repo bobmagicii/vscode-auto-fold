@@ -18,7 +18,7 @@ Does this file have an extension that matches that in the `autofold.types` data 
 
 This method works well when you have to deal with lots of differnet types of files, are having to work on a large project that already exists, are having to work with a team, just think the magic comment is stupid, or any combo of these.
 
-So for example, in our projects 90% of PHP files are classes, so I autofold all `.php` files to level 2 so i see the class and method signatures. All CSS files though are pretty flat, `.css` files automatically getting folded to level 1 baring only their definition names by default.
+So for example, in our projects 90% of PHP files are classes, so I autofold all `.php` files to level 2 so i see the class and method signatures. The few files that are not classes I put the magic comment in with a value that makes more sense to them. All CSS files though are pretty flat, `.css` files automatically getting folded to level 1 baring only their definition names by default.
 
 ## 3) Default Fallback
 
