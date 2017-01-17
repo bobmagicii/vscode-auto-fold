@@ -88,6 +88,7 @@ to make this thing go.
 
 		let Config = vscode.workspace.getConfiguration("autofold");
 		let Level = AutoFoldTracker.GetLevel(File);
+		let Pack = 0;
 
 		// check if it makes sense.
 
@@ -99,15 +100,38 @@ to make this thing go.
 		// commit.
 
 		if(Config.unfold) {
-			AutoFoldTracker.PrintDebug('>> unfold: ' + File.uri.fsPath);
-			vscode.window.setStatusBarMessage("Auto Unfold",2000);
+			// this unfold is out here as the intented behaviour is to
+			// always unfold a document before folding it, and, if for
+			// example it was asked to be folded to level 3, but only
+			// contains 2 levels, then you will see the full source.
+
+			AutoFoldTracker.PrintDebug('>> unfold(): ' + File.uri.fsPath);
 			vscode.commands.executeCommand('editor.unfoldAll');
 		}
 
 		if(Level > 0) {
+			// then we apply the folding to the level that was asked.
+
 			AutoFoldTracker.PrintDebug('>> fold(' + Level + '): ' + File.uri.fsPath);
-			vscode.window.setStatusBarMessage("Auto Fold: " + Level,2000);
 			vscode.commands.executeCommand('editor.foldLevel' + Level);
+			vscode.window.setStatusBarMessage("Auto Fold: " + Level,2000);
+
+			if(Config.pack) {
+				// once the requested level is folded we can fold all
+				// the subtrees super fast, because they are no longer
+				// being rendered - if microsoft did it right - else
+				// this is a placebo speed boost. the technically
+				// correct way to computer science it, but without any
+				// backup implementation to support it lololol. honestly
+				// if it doesnt help the speed i'd almost rather see
+				// my code pack up as though its an intended animation.
+
+				Pack = Level;
+				while(10 > Pack++) {
+					AutoFoldTracker.PrintDebug(">> pack(" + Pack + ")")
+					vscode.commands.executeCommand('editor.foldLevel' + Pack);
+				}
+			}
 		}
 
 		// and remember we did this file.

@@ -14,6 +14,10 @@ extends AnotherThing {
 	this is the first method.
 	//*/
 
+		if($Omg) {
+			// bbq
+		}
+
 		return 1;
 	}
 

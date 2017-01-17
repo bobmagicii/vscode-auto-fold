@@ -53,6 +53,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Completely unfold a file before folding, to avoid the editor from attempting to remember where you left it, or to deal with changing the level to be higher than the file even contains."
+                },
+                "autofold.pack": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "For the ultimate minimalist: additionally fold every level lower than the level that was asked to be folded. Suggest autofold.unfold be enabled at the same time, it will help with consistency."
                 }
             }
         }
