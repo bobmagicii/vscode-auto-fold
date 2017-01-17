@@ -14,7 +14,7 @@ This method is handy if you deal with a few one off files. Here is an example in
 
 ## 2) File Extension Match
 
-Does this file have an extension that matches that in the `autofold.types` data array? If so then the file will be folded to the level configured. There are no default values for this, beause every developer and project is a unique snowflake.  See the configuration section for more info on how to properly set that up.
+Does this file have an extension that matches that in the `autofold.types` data array? If so then the file will be folded to the level configured. There are no default values for this as every developer and project is a unique snowflake.  See the configuration section for more info on how to properly set that up.
 
 This method works well when you have to deal with lots of differnet types of files, are having to work on a large project that already exists, are having to work with a team, just think the magic comment is stupid, or any combo of these.
 
