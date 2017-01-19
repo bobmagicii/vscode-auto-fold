@@ -40,6 +40,14 @@ You can fold all files without magic comments or specific settings in `autofold.
 "autofold.default": 0
 ```
 
+## `autofold.delay`
+
+Sometimes code will lie about a file being ready when opened. When a file is opened we put the auto folding on a short delay (250ms) to give it time to get itself together. If your computer is slow, you may need to bump this value up.
+
+```json
+"autofold.delay": 250
+```
+
 ## `autofold.pack`
 
 Fold all sub levels of the level that we really wanted. So for example if the file asked to be folded at level 2, it will fold level 2 and then 3+ so when you expand level 2, you continue to be presented with a minimalist view until you expand more branches.
@@ -97,6 +105,12 @@ Just like if you use the normal hot keys without this extension, the block where
 # Changelogue
 
 ```
+1.0.5 (2017-01-18)
+
+- sometimes code tells the extension a file is finished opening, but its a lie. puts the auto-fold-on-file-open on a short delay to give code some time to gets its crap together.
+
+- delay is configurable via `autofold.delay`
+
 1.0.4 (2017-01-16)
 
 - add option `autofold.pack` to fold sublevels too. (default true)

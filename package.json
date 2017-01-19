@@ -62,7 +62,7 @@
 				"autofold.delay": {
 					"type": "integer",
 					"default": 250,
-					"description": "It turns out we are able to process File Open events faster than Code can set vscode.window.activeTextEditor, this will put the auto fold on open on a short delay. If you are seeing files not auto folded on open and your computer is slow as balls, you may need to increase this value some."
+					"description": "It turns out we are able to process File Open events faster than Code can set vscode.window.activeTextEditor, this will put the auto fold on open on a short delay (250ms). If you are seeing files not auto folded on open and your computer is slow as balls, you may need to increase this value some."
 				}
 			}
 		}
