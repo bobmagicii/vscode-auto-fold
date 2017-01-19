@@ -37,7 +37,7 @@ this is the main api instance that contains all the tracking and actions
 to make this thing go.
 //*/
 
-	Version: 104,
+	Version: 105,
 	/*//
 	@type Int
 	current api version.
@@ -163,11 +163,18 @@ to make this thing go.
 	when a file is opened, fold it.
 	//*/
 
-		if(AutoFoldTracker.Has(File))
-		return;
+		// so this has to be on a delay apparently, because we are able to
+		// start processing the file before vscode.
 
-		AutoFoldTracker.Fold(File);
-		return;
+		let Config = vscode.workspace.getConfiguration("autofold");
+
+		setTimeout(function(){
+			if(AutoFoldTracker.Has(File))
+			return;
+
+			AutoFoldTracker.Fold(File);
+			return;
+		},Config.delay);
 	},
 
 	OnFileClose:
