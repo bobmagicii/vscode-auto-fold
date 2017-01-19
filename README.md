@@ -1,6 +1,8 @@
-# [![https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah](https://img.shields.io/badge/Auto%20Fold-%20Visual%20Studio%20Marketplace-007ACC.svg)](https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah)
+# [![https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah](https://img.shields.io/badge/Auto%20Fold-%20Visual%20Studio%20Marketplace-007ACC.svg)](https://marketplace.visualstudio.com/items?itemName=bobmagicii.autofoldyeah) [![Contact @bobmagicii on Twitter](https://img.shields.io/twitter/url/http/bobmagicii.svg?style=social&label=@bobmagicii)](https://twitter.com/bobmagicii)
 
-This extension will automatically fold code files when you open them. Automatic folding only happens when opened. If they are already open they will stay as you have them - unless that was the first time you switched to that tab since re-starting vscode - then it will fold it the first time that tab is activated.
+This extension will automatically fold code files when you open them.
+
+Questions? Comments? Suggestions? Email bob at nether dot io or hit me up on Twitter, @bobmagicii.
 
 The following formula is followed to determine if a file should be folded:
 
