@@ -1,85 +1,85 @@
 {
-	"name": "autofoldyeah",
-	"displayName": "Auto Fold",
-	"description": "Automatically fold code when the file is opened if the magic comment is found.",
-	"version": "1.0.5",
-	"publisher": "bobmagicii",
-	"icon": "images/icon.png",
-	"galleryBanner": {
-		"color": "#413d3d",
-		"theme": "dark"
-	},
-	"engines": {
-		"vscode": "^1.5.0"
-	},
-	"categories": [
-		"Formatters",
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./extension",
-	"contributes": {
-		"commands": [
-			{
-				"command": "extension.autofold",
-				"title": "Auto Fold"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "extension.autofold",
-				"key": "alt+`",
-				"mac": "alt+`",
-				"when": "editorTextFocus"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Auto Fold Configuration",
-			"properties": {
-				"autofold.default": {
-					"type": "integer",
-					"default": 0,
-					"description": "If a file does not specify a folding level, automatically fold the file to this level. Set to 0 to disable folding files that do not ask for it."
-				},
-				"autofold.types": {
-					"type": "array",
-					"default": [],
-					"description": "Default filetypes with their automatic folding level based on their file extensions. It should be an array of objects containing two properties: ext (a string) and level (an integer)."
-				},
-				"autofold.unfold": {
-					"type": "boolean",
-					"default": false,
-					"description": "Completely unfold a file before folding, to avoid the editor from attempting to remember where you left it, or to deal with changing the level to be higher than the file even contains."
-				},
-				"autofold.pack": {
-					"type": "boolean",
-					"default": true,
-					"description": "For the ultimate minimalist: additionally fold every level lower than the level that was asked to be folded. Suggest autofold.unfold be enabled at the same time, it will help with consistency."
-				},
-				"autofold.delay": {
-					"type": "integer",
-					"default": 250,
-					"description": "It turns out we are able to process File Open events faster than Code can set vscode.window.activeTextEditor, this will put the auto fold on open on a short delay (250ms). If you are seeing files not auto folded on open and your computer is slow as balls, you may need to increase this value some."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install"
-	},
-	"devDependencies": {
-		"typescript": "^2.0.3",
-		"vscode": "^1.0.0",
-		"mocha": "^2.3.3",
-		"eslint": "^3.6.0",
-		"@types/node": "^6.0.40",
-		"@types/mocha": "^2.2.32"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/bobmagicii/vscode-auto-fold.git"
-	}
+    "name": "autofoldyeah",
+    "displayName": "Auto Fold",
+    "description": "Automatically fold code when the file is opened if the magic comment is found.",
+    "version": "1.0.6",
+    "publisher": "bobmagicii",
+    "icon": "images/icon.png",
+    "galleryBanner": {
+        "color": "#413d3d",
+        "theme": "dark"
+    },
+    "engines": {
+        "vscode": "^1.5.0"
+    },
+    "categories": [
+        "Formatters",
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.autofold",
+                "title": "Auto Fold"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "extension.autofold",
+                "key": "alt+`",
+                "mac": "alt+`",
+                "when": "editorTextFocus"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Auto Fold Configuration",
+            "properties": {
+                "autofold.default": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "If a file does not specify a folding level, automatically fold the file to this level. Set to 0 to disable folding files that do not ask for it."
+                },
+                "autofold.types": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Default filetypes with their automatic folding level based on their file extensions. It should be an array of objects containing two properties: ext (a string) and level (an integer)."
+                },
+                "autofold.unfold": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Completely unfold a file before folding, to avoid the editor from attempting to remember where you left it, or to deal with changing the level to be higher than the file even contains."
+                },
+                "autofold.pack": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "For the ultimate minimalist: additionally fold every level lower than the level that was asked to be folded. Suggest autofold.unfold be enabled at the same time, it will help with consistency."
+                },
+                "autofold.delay": {
+                    "type": "integer",
+                    "default": 250,
+                    "description": "It turns out we are able to process File Open events faster than Code can set vscode.window.activeTextEditor, this will put the auto fold on open on a short delay (250ms). If you are seeing files not auto folded on open and your computer is slow as balls, you may need to increase this value some."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "eslint": "^3.6.0",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bobmagicii/vscode-auto-fold.git"
+    }
 }
