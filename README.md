@@ -107,6 +107,11 @@ Just like if you use the normal hot keys without this extension, the block where
 # Changelogue
 
 ```
+1.0.6 (2017-03-13)
+
+- fixes a glitch introduced somewhere around insiders 1.11.0 where files would get re-folded every time you switch tabs. this was partially caused by code being fucking stupid and emitting file open/close events *every tab switch* as well as
+they are adding ".git" to the end of all filenames internally for some (what im sure is stupid) reason.
+
 1.0.5 (2017-01-18)
 
 - sometimes code tells the extension a file is finished opening, but its a lie. puts the auto-fold-on-file-open on a short delay to give code some time to gets its crap together.
