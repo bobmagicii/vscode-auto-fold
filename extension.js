@@ -37,7 +37,7 @@ this is the main api instance that contains all the tracking and actions
 to make this thing go.
 //*/
 
-	Version: 105,
+	Version: 106,
 	/*//
 	@type Int
 	current api version.
@@ -55,6 +55,12 @@ to make this thing go.
 	@type Array
 	holds a list of filenames we currently have open so that it can remember
 	if it has already attempted a file fold this session or not.
+	//*/
+
+	Interval: 0,
+	/*//
+	@type Int
+	the little timeout system uses this to remember the last active interval.
 	//*/
 
 	Has:
@@ -167,8 +173,14 @@ to make this thing go.
 		// start processing the file before vscode.
 
 		let Config = vscode.workspace.getConfiguration("autofold");
+		AutoFoldTracker.PrintDebug("file opened: " + File.uri.fsPath);
 
-		setTimeout(function(){
+		if(AutoFoldTracker.Interval) {
+			clearInterval(AutoFoldTracker.Interval);
+			AutoFoldTracker.Interval = 0;
+		}
+
+		AutoFoldTracker.Interval = setTimeout(function(){
 			if(AutoFoldTracker.Has(File))
 			return;
 
@@ -192,14 +204,22 @@ to make this thing go.
 			let Iter = 0
 			let Files = new Array;
 
-			// if the file is still open do nothing.
+			// fix for vscode 1.11.0 insiders adding .git to the end of files...
+			// https://github.com/Microsoft/vscode/issues/22561
+			let Filename = File.uri.fsPath.replace(/\.git$/,'');
 
-			for(Iter = 0; Iter < vscode.workspace.textDocuments.length; Iter++)
-			if(vscode.workspace.textDocuments[Iter].uri.fsPath == File.uri.fsPath)
-			return;
+			// if the file is still open do nothing.
+			for(Iter = 0; Iter < vscode.workspace.textDocuments.length; Iter++) {
+				//AutoFoldTracker.PrintDebug("file to check: " + Filename);
+				//AutoFoldTracker.PrintDebug("currently open: " + vscode.workspace.textDocuments[Iter].uri.fsPath);
+
+				if(vscode.workspace.textDocuments[Iter].uri.fsPath == Filename)
+				return;
+			}
+
+			// AutoFoldTracker.PrintDebug("file closed: " + Filename);
 
 			// pull it out.
-
 			for(Iter = 0; Iter < AutoFoldTracker.Files.length; Iter++)
 			if(File.uri.fsPath != AutoFoldTracker.Files[Iter])
 			Files.push(AutoFoldTracker.Files[Iter]);
