@@ -106,33 +106,32 @@ Just like if you use the normal hot keys without this extension, the block where
 
 # Changelogue
 
-```
-1.0.6 (2017-03-13)
+**1.0.6 (2017-03-13)**
 
 - fixes a glitch introduced somewhere around insiders 1.11.0 where files would get re-folded every time you switch tabs. this was partially caused by code being fucking stupid and emitting file open/close events *every tab switch* as well as
 they are adding ".git" to the end of all filenames internally for some (what im sure is stupid) reason.
 
-1.0.5 (2017-01-18)
+**1.0.5 (2017-01-18)**
 
 - sometimes code tells the extension a file is finished opening, but its a lie. puts the auto-fold-on-file-open on a short delay to give code some time to gets its crap together.
 
 - delay is configurable via `autofold.delay`
 
-1.0.4 (2017-01-16)
+**1.0.4 (2017-01-16)**
 
 - add option `autofold.pack` to fold sublevels too. (default true)
 
-1.0.3 (2017-01-13)
+**1.0.3 (2017-01-13)**
 
 - clean up debugging and optimise mostly. maybe be slightly snappier, though it already was decent.
 
-1.0.2 (2017-01-12)
+**1.0.2 (2017-01-12)**
 
 - added option `autofold.types` to define defaults based on file extension. (no defaults)
 
 - added option `autofold.unfold` to unfold files fully before folding at the requested level. (default true)
 
-1.0.1 (2017-01-11)
+**1.0.1 (2017-01-11)**
 
 - added autofold.default to configuration. it will autofold files that do not have vscode-fold in them to the value specified. (default 0 - disabled)
 
@@ -142,7 +141,6 @@ they are adding ".git" to the end of all filenames internally for some (what im 
 
 - swap out editor error banners with silent ones because in reality nobody cares if you try and fold when you have no files open, i am sure.
 
-1.0.0 (2017-01-10)
+**1.0.0 (2017-01-10)**
 
 - Initial release.
-```
