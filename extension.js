@@ -120,7 +120,6 @@ to make this thing go.
 
 			AutoFoldTracker.PrintDebug('>> fold(' + Level + '): ' + File.uri.fsPath);
 			vscode.commands.executeCommand('editor.foldLevel' + Level);
-			vscode.window.setStatusBarMessage("Auto Fold: " + Level,2000);
 
 			if(Config.pack) {
 				// once the requested level is folded we can fold all
@@ -139,6 +138,14 @@ to make this thing go.
 				}
 			}
 		}
+
+		// get specific lines to fold
+
+		let SpecificFolds = AutoFoldTracker.GetSpecificFolds(File)
+
+		AutoFoldTracker.PrintDebug('>> foldLines(' + SpecificFolds.join(', ') + '): ' + File.uri.fsPath);
+		vscode.commands.executeCommand('editor.fold', {selectionLines: SpecificFolds});
+		vscode.window.setStatusBarMessage("Auto Fold: " + Level,2000);
 
 		// and remember we did this file.
 
@@ -230,6 +237,29 @@ to make this thing go.
 		return;
 	},
 
+	GetSpecificFolds:
+	function(File) {
+	/*//
+	@argv TextDocument
+	@return Int[]
+	finds any "specific" folds the user's created
+	a specific fold will totally fold the line immediately below it
+	//*/
+
+		let SpecificFolds = []
+
+		// attempt to find instances of vscode-fold$ in the file
+		for (let i = 0; i < File.lineCount; i++) {
+			if (/vscode-fold-next$/.test(File.lineAt(i).text)) {
+				SpecificFolds.push(i + 1)
+			}
+		}
+
+		////////
+
+		return SpecificFolds;
+	},
+
 	GetLevel:
 	function(File) {
 	/*//
@@ -284,20 +314,22 @@ to make this thing go.
 		let ExtConf;
 		let ExtCurr;
 
-		for(Iter = 0; Iter < Config.types.length; Iter++) {
-			if(!AutoFoldTracker.IsTypeConfigValid(Config.types[Iter]))
-			continue;
+		if (Config.Types) {
+			for(Iter = 0; Iter < Config.types.length; Iter++) {
+				if(!AutoFoldTracker.IsTypeConfigValid(Config.types[Iter]))
+				continue;
 
-			ExtConf = Config.types[Iter].ext.toLowerCase();
-			ExtCurr = File.uri.fsPath.toLowerCase();
+				ExtConf = Config.types[Iter].ext.toLowerCase();
+				ExtCurr = File.uri.fsPath.toLowerCase();
 
-			if(ExtCurr.indexOf(ExtConf) == (ExtCurr.length - ExtConf.length)) {
-				AutoFoldTracker.PrintDebug(
-					"## using autofold.types[" + Config.types[Iter].ext + "]: " +
-					Config.types[Iter].level
-				);
-				Output = Config.types[Iter].level;
-				break;
+				if(ExtCurr.indexOf(ExtConf) == (ExtCurr.length - ExtConf.length)) {
+					AutoFoldTracker.PrintDebug(
+						"## using autofold.types[" + Config.types[Iter].ext + "]: " +
+						Config.types[Iter].level
+					);
+					Output = Config.types[Iter].level;
+					break;
+				}
 			}
 		}
 
