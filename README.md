@@ -6,7 +6,7 @@ Questions? Comments? Suggestions? Email bob at nether dot io or hit me up on Twi
 
 The following formula is followed to determine if a file should be folded:
 
-## 1) Magic Comment
+## 1) Magic Comment To Fold All
 
 Does this file contain a magic comment? It does not matter how you put it in the file, all that matters is that it is there and not causing a syntax error. So, single or multiline comments somewhere out of the way. If this magic comment is found then the code is automatically folded to the level it asked.
 
@@ -14,7 +14,11 @@ This method is handy if you deal with a few one off files. Here is an example in
 
 `// vscode-fold=#`
 
-## 2) File Extension Match
+## 2) Magic Comment To Fold Next Line
+
+Use `// vscode-fold-next` to fold just the line below the comment
+
+## 3) File Extension Match
 
 Does this file have an extension that matches that in the `autofold.types` data array? If so then the file will be folded to the level configured. There are no default values for this as every developer and project is a unique snowflake.  See the configuration section for more info on how to properly set that up.
 
@@ -22,7 +26,7 @@ This method works well when you have to deal with lots of differnet types of fil
 
 So for example, in our projects 90% of PHP files are classes, so I autofold all `.php` files to level 2 so i see the class and method signatures. The few files that are not classes I put the magic comment in with a value that makes more sense to them. All CSS files though are pretty flat, `.css` files automatically getting folded to level 1 baring only their definition names by default.
 
-## 3) Default Fallback
+## 4) Default Fallback
 
 Failing the above conditions, you can force all files to be folded at a specific value set with `autofold.default`. See the configuration section for more info about that setting.
 
