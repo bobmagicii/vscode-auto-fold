@@ -12,7 +12,7 @@ Does this file contain a magic comment? It does not matter how you put it in the
 
 This method is handy if you deal with a few one off files. Here is an example in a C type language.
 
-`// vscode-fold=#`
+`// vscode-fold=<<folding level number>>`
 
 ## 2) File Extension Match
 
