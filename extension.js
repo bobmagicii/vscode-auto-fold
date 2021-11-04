@@ -1,7 +1,9 @@
 /*//
 //// Auto Fold
-//// Bob Majdak Jr @bobmagicii <bob@nether.io>
 //// Released under BSD 3-Clause
+////
+//// Bob Majdak Jr <bmajdak@php.net>
+//// https://twitter.com/bobmagicii
 ////
 //// This extension will check files for the magic string:
 //// vscode-fold=# and if found, will automatically fold that file to the
@@ -10,68 +12,328 @@
 //// vscode-fold=2
 //*/
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+class AutoFoldType {
+
+	ext = null;
+	level = 0;
+
+	constructor({ext, level}) {
+		this.ext = ext.toLowerCase();
+		this.level = level;
+		return;
+	};
+};
+
+class AutoFoldState {
+
+	filename = null;
+	auto = false;
+
+	constructor(filename) {
+		this.filename = filename;
+		return;
+	};
+};
+
+class AutoFoldConfig {
+
+	default = 0;
+	types = [];
+	unfold = false;
+	pack = true;
+	delay = 0;
+	debug = true;
+
+	constructor(input) {
+
+		// fill our properties from vscode.
+
+		for(const key in this) {
+			if(!key.match(/^_/))
+			if(typeof input[key] !== 'undefined')
+			this[key] = input[key];
+		}
+
+		// hydrate our file type definitions.
+
+		if(Array.isArray(this.types))
+		for(const key in this.types) {
+			if(typeof this.types[key].ext === 'undefined')
+			continue;
+
+			if(typeof this.types[key].level === 'undefined')
+			continue;
+
+			this.types[key] = new AutoFoldType(this.types[key]);
+		}
+
+		return;
+	};
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	getType(filename) {
+
+		let lowername = filename.toLowerCase();
+
+		for(const key in this.types) {
+			let pos = lowername.indexOf(this.types[key].ext);
+			let off = lowername.length - this.types[key].ext.length;
+
+			if(pos === off)
+			return this.types[key];
+		}
+
+		return null;
+	};
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	static FromWorkspaceConfig() {
+
+		return new AutoFoldConfig(
+			vscode
+			.workspace
+			.getConfiguration("autofold")
+		);
+	};
+
+};
+
+class AutoFoldManager {
+
+	version = 200;
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	config = null;
+	files = {};
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	constructor(afConfig) {
+
+		this.config = afConfig;
+
+		AutoFoldManager.printDebug(
+			'constructor',
+			'AutoFoldManager is ready'
+		);
+
+		return;
+	};
+
+	fold(filename) {
+	/*//
+	@return bool - if a fold happened or not.
+	//*/
+
+		let level = this.getLevel(filename);
+		let folded = false;
+
+		if(level > 0) {
+			if(this.config.unfold) {
+				AutoFoldManager.printDebug('fold', 'unfolding all');
+				vscode.commands.executeCommand('editor.unfoldAll');
+			}
+
+			AutoFoldManager.printDebug('fold', `folding ${filename} at ${level}`);
+			vscode.commands.executeCommand(`editor.foldLevel${level}`);
+			vscode.window.setStatusBarMessage(`AutoFold Level ${level}`, 2000);
+			folded = true;
+		}
+
+		return folded;
+	};
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	getLevel(filename) {
+	/*//
+	@return int - the level this file should be folded to
+	//*/
+
+		let level = 0;
+
+		if(level === 0)
+		level = this.getLevelForType(filename);
+
+		if(level === 0)
+		level = this.getLevelDefault();
+
+		return level;
+	};
+
+	getLevelFromFile() {
+	/*//
+	@return int - the level this file wants to be folded to
+	//*/
+
+		return 0;
+	};
+
+	getLevelForType(filename) {
+	/*//
+	@return int - the level this type of file should be folded to
+	//*/
+
+		let type = this.config.getType(filename);
+
+		if(type !== null) {
+			AutoFoldManager.printDebug(
+				'getLevelForType',
+				`using ${type.ext} ${type.level}`
+			);
+
+			return type.level;
+		}
+
+		return 0;
+	};
+
+	getLevelDefault() {
+	/*//
+	@return int - the default level this should be folded to.
+	//*/
+
+		return this.config.default;
+	};
+
+	getFileState(filename) {
+
+		if(typeof this.files[filename] === 'undefined')
+		this.files[filename] = new AutoFoldState(filename);
+
+		return this.files[filename];
+	};
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	onCommandFold() {
+
+		return;
+	};
+
+	onFileOpen(file) {
+
+		let filename = AutoFoldManager.getFilenameFrom(file);
+		let state = this.getFileState(filename);
+
+		AutoFoldManager.printDebug('onFileOpen', `filename: ${filename}`);
+
+		// if this file has not been automatically folded yet then
+		// do so now. vscode emits file open and close events every time
+		// you switch tabs and we only want it to happen when the file is
+		// first opened.
+
+		if(state.auto === false)
+		state.auto = this.fold(filename);
+
+		return;
+	};
+
+	onFileClose(file) {
+
+		let filename = AutoFoldManager.getFilenameFrom(file);
+
+		if(this.config.debug)
+		AutoFoldManager.printDebug(
+			'onFileClose',
+			`filename: ${filename}`
+		);
+
+		return;
+	};
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	static getFilenameFrom(input) {
+
+		// for some dumb dipshit reason vscode emits two events for
+		// every single file you open, with the same filepath, but with
+		// this stupid .git added to the end. until i figure out why that
+		// made sense to them we're just gonna strip that right off.
+
+		if(typeof input.uri === 'object')
+		return input.uri.fsPath.replace(/\.git$/,'');
+
+		return input;
+	};
+
+	static printDebug(source, message) {
+
+		console.log(`[AutoFoldManager.${source}] ${message}`);
+		return;
+	};
+
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 let vscode = require('vscode');
+let afConfig = AutoFoldConfig.FromWorkspaceConfig();
+let afSystem = new AutoFoldManager(afConfig);
 
-/*//
-microsoft in their infinite fucking wisdom made the "open" event fire every time
-you switch tabs. what the fuck, people. so here is this retarded overengineered
-thing designed to do what the events should be describing.
+exports.activate = function(context) {
 
-it gets better, the close event also fires on tab switch. and when you close
-a tab there is no way to ask the TextDocument if it is really still open so
-don't forget to check out the hillarious clusterfuck in the OnFileClose method.
+	context
+	.subscriptions
+	.push(vscode.commands.registerCommand(
+		'extension.autofold',
+		afSystem.onCommandFold.bind(afSystem)
+	));
 
-Known Issues:
-vscode loads extensions lazy, which happens after files open. files that are
-already open will be folded the first time you switch to that tab. if a file
-was already open in the active tab before the plugin loaded then you may need
-to switch tabs forth and back, or use the command autofold.
-//*/
+	vscode
+	.workspace
+	.onDidOpenTextDocument(
+		afSystem.onFileOpen.bind(afSystem),
+		null,
+		context
+	);
+
+	vscode
+	.workspace
+	.onDidCloseTextDocument(
+		afSystem.onFileClose.bind(afSystem),
+		null,
+		context
+	);
+
+	return;
+};
+
+exports.deactivate = function() {
+
+	return;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-var AutoFoldTracker = {
-/*//
-this is the main api instance that contains all the tracking and actions
-to make this thing go.
-//*/
+return;
 
-	Version: 106,
-	/*//
-	@type Int
-	current api version.
-	//*/
+class _AutoFoldingSystem {
 
-	Debug: false,
-	/*//
-	@type Bool
-	supress debugging messages. i think console.log is slow so maybe we can
-	get moar by skipping them.
-	//*/
+	version = 107;
 
-	Files: [],
-	/*//
-	@type Array
-	holds a list of filenames we currently have open so that it can remember
-	if it has already attempted a file fold this session or not.
-	//*/
+	Debug = true;
 
-	Interval: 0,
-	/*//
-	@type Int
-	the little timeout system uses this to remember the last active interval.
-	//*/
 
-	Has:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Bool
-	check if we have seen this file before or not. we have to do this because
-	code is stupid and fires the damn open event every time you switch
-	regardless of if that was the first time it was opened or not.
-	//*/
+	Files = [];
+	Interval = 0;
+
+	Has(File) {
 
 		let Iter = 0;
 
@@ -80,19 +342,14 @@ to make this thing go.
 		return true;
 
 		return false;
-	},
+	};
 
-	Fold:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Void
-	attempt to perform a folding operation.
-	//*/
+	Fold(File) {
 
 		// figure out what level we want.
 
 		let Config = vscode.workspace.getConfiguration("autofold");
+		let Filename = AutoFoldTracker.GetFilename(File);
 		let Level = AutoFoldTracker.GetLevel(File);
 		let Pack = 0;
 
@@ -142,16 +399,12 @@ to make this thing go.
 
 		// and remember we did this file.
 
-		AutoFoldTracker.Files.push(File.uri.fsPath);
+		AutoFoldTracker.Files.push(Filename);
 
 		return;
-	},
+	};
 
-	CommandFold:
-	function() {
-	/*//
-	handler for when fold is requested by the pallete command.
-	//*/
+	CommandFold() {
 
 		let Current = AutoFoldTracker.GetCurrentDocument();
 
@@ -159,21 +412,16 @@ to make this thing go.
 		AutoFoldTracker.Fold(vscode.window.activeTextEditor.document);
 
 		return;
-	},
+	};
 
-	OnFileOpen:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Void
-	when a file is opened, fold it.
-	//*/
+	OnFileOpen(File) {
 
 		// so this has to be on a delay apparently, because we are able to
 		// start processing the file before vscode.
 
 		let Config = vscode.workspace.getConfiguration("autofold");
-		AutoFoldTracker.PrintDebug("file opened: " + File.uri.fsPath);
+
+		AutoFoldTracker.PrintDebug(`FILE OPENED: ${File.uri.fsPath}`);
 
 		if(AutoFoldTracker.Interval) {
 			clearInterval(AutoFoldTracker.Interval);
@@ -187,15 +435,9 @@ to make this thing go.
 			AutoFoldTracker.Fold(File);
 			return;
 		},Config.delay);
-	},
+	};
 
-	OnFileClose:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Void
-	when a file is closed, forget about it.
-	//*/
+	OnFileClose(File) {
 
 		// this has been put on a delay to give the editor time to actually
 		// notice that a file was closed...
@@ -228,16 +470,9 @@ to make this thing go.
 		},1000);
 
 		return;
-	},
+	};
 
-	GetLevel:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Int
-	try and find the magic comment within the file. returns the int value of
-	that comment for the fold levels.
-	//*/
+	GetLevel(File) {
 
 		// attempt to find vscode-fold=# in the file, keeping it at the end
 		// of the line to avoid triggering it when just talking about it in
@@ -267,16 +502,17 @@ to make this thing go.
 		////////
 
 		return Level;
-	},
+	};
 
-	GetDefaultLevel:
-	function(File) {
-	/*//
-	@argv TextDocument
-	@return Int
-	try and find a folding level based on the extension of this file. if none
-	is found then return the default default.
-	//*/
+	GetFilename(File) {
+
+		if(typeof File.uri === 'object')
+		return File.uri.fsPath;
+
+		return File;
+	};
+
+	GetDefaultLevel(File) {
 
 		let Config = vscode.workspace.getConfiguration("autofold");
 		let Iter = 0;
@@ -309,31 +545,18 @@ to make this thing go.
 		}
 
 		return Output;
-	},
+	};
 
-	GetCurrentDocument:
-	function() {
-	/*//
-	@argv Void
-	@return ?TextDocument
-	get the currently active document.
-	//*/
+	GetCurrentDocument() {
 
 		if(vscode.window.activeTextEditor)
 		if(vscode.window.activeTextEditor.document)
 		return vscode.window.activeTextEditor.document;
 
 		return null;
-	},
+	};
 
-	IsTypeConfigValid:
-	function(TypeObject) {
-	/*//
-	@argv Object
-	@return Bool
-	make sure that the configuration object given for default types appears to
-	be a usable format.
-	//*/
+	IsTypeConfigValid(TypeObject) {
 
 		if(typeof TypeObject != "object")
 		return false;
@@ -345,26 +568,28 @@ to make this thing go.
 		return false;
 
 		return true;
-	},
+	};
 
-	PrintDebug:
-	function(Msg) {
-	/*//
-	@argv String
-	@return Void
-	prints prefixed debug messages.
-	//*/
+	PrintDebug(Msg) {
 
 		if(AutoFoldTracker.Debug)
 		console.log("[AF] " + Msg);
 
 		return;
-	}
+	};
+
+	IntervalClear() {
+
+
+		return;
+	};
 
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+let AutoFoldTracker = new _AutoFoldingSystem;
 
 exports.activate
 =function(context) {
