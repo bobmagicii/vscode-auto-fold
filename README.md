@@ -2,17 +2,22 @@
 
 This extension will automatically fold code files when you open them.
 
-Questions? Comments? Suggestions? Email bob at nether dot io or hit me up on Twitter, @bobmagicii.
+Questions? Comments? Suggestions? Email bob at majdak dot net or hit me up on Twitter, @bobmagicii.
 
 The following formula is followed to determine if a file should be folded:
 
+
 ## 1) Magic Comment
 
-Does this file contain a magic comment? It does not matter how you put it in the file, all that matters is that it is there and not causing a syntax error. So, single or multiline comments somewhere out of the way. If this magic comment is found then the code is automatically folded to the level it asked.
+Does this file contain a magic comment? It does not matter how you put it in the file, all that matters is that it is there and not causing a syntax error. So, single or multiline comments somewhere out of the way. If this magic comment is found then the code is automatically folded to the level it asked. This method is handy if you deal with a few one off files. Here is an example in a C type language.
 
-This method is handy if you deal with a few one off files. Here is an example in a C type language.
+`// fold-file=#`
 
-`// vscode-fold=#`
+`// vscode-fold=#` (deprecated)
+
+> note: v2 is retiring the vscode- prefix to make it more generic as others
+> have expressed desire to reuse the content for other editors.
+
 
 ## 2) File Extension Match
 
