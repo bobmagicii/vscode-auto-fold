@@ -1,5 +1,5 @@
 {
-  "name": "autofoldyeah",
+	"name": "autofoldyeah",
 	"displayName": "Auto Fold",
 	"description": "Automatically fold code.",
 	"version": "0.0.1",
@@ -10,9 +10,9 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onStartupFinished"
+		"onStartupFinished"
 	],
-	"main": "./out/extension.js",
+	"main": "./out/main.js",
 	"contributes": {
 		"commands": [
 			{
@@ -26,8 +26,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"lint": "eslint src --ext ts"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.62.0",

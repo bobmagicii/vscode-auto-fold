@@ -3,6 +3,16 @@ import Util from './util';
 
 class AutoFoldSystem {
 
+	constructor() {
+
+		Util.println(
+			'Auto Fold System Initialized',
+			'AutoFoldSystem::constructor'
+		);
+
+		return;
+	};
+
 	public OnSwitchedEditors(editor: vscode.TextEditor | undefined):
 	void {
 
