@@ -12,34 +12,11 @@ export function activate(context: vscode.ExtensionContext) {
 @activation onStartupFinished
 //*/
 
-	Util.println('Loading Auto Fold...');
-
-	let afSystem = new AutoFoldSystem;
-
-	////////
-
-	(context.subscriptions)
-	.push(
-		(vscode.commands)
-		.registerCommand(
-			'autofoldyeah.autoFold',
-			afSystem.onCommandFold.bind(afSystem)
-		)
-	);
-
-	(vscode.window)
-	.onDidChangeActiveTextEditor(
-		afSystem.onSwitchedEditors.bind(afSystem)
-	);
-
-	////////
+	let afSystem = new AutoFoldSystem(vscode, context);
 
 	if(vscode.window.activeTextEditor !== undefined)
 	afSystem.onCommandFold();
 
-	////////
-
-	Util.println('Auto Fold Ready.');
 	return;
 };
 
@@ -48,4 +25,5 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
 
+	return;
 };
