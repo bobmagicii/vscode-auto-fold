@@ -1,6 +1,7 @@
 import Module = require('module');
 import * as vscode from 'vscode';
 import Util from './util';
+import AutoFoldFile from './auto-fold-file';
 
 class AutoFoldSystem {
 /*//
@@ -12,7 +13,7 @@ extension directly as its core interface.
 
 	ext: vscode.ExtensionContext;
 	api: typeof vscode;
-	tracker: Map<string, boolean>;
+	tracker: Map<string, AutoFoldFile>;
 
 	constructor(api: typeof vscode, ext: vscode.ExtensionContext) {
 	/*//
@@ -74,11 +75,14 @@ extension directly as its core interface.
 	boolean {
 
 		let editor = this.api.window.activeTextEditor;
+		let path = null;
 
 		if(editor === undefined) {
 			Util.println('nothing to fold','AutoFoldSystem::fold');
 			return false;
 		}
+
+		path = editor.document.uri.fsPath;
 
 		////////
 
@@ -105,7 +109,7 @@ extension directly as its core interface.
 		// @todo 2021-11-12 unfold first if configured.
 
 		this.api.commands.executeCommand(`editor.foldLevel${level}`);
-		this.tracker.set(editor.document.uri.fsPath, true);
+		this.tracker.set(path, new AutoFoldFile(editor, true));
 
 		this.api.window.setStatusBarMessage(`AutoFold Level ${level}`, 2000);
 
